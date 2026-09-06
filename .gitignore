@@ -1,4 +1,7 @@
-__pycache__/
 *.py[cod]
-benchmark_results/
 .DS_Store
+.venv/
+__pycache__/
+benchmark_results/
+manuscript/manuscript_rendered.md
+outputs/

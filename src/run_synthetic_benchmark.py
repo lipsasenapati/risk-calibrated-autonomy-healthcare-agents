@@ -1,8 +1,22 @@
-"""Deterministic synthetic benchmark for the governed-action manuscript.
+"""SUPERSEDED parameterized simulation. Retained for provenance only.
 
-This is a simulation, not a clinical evaluation.  It generates 384 fixed care-
-coordination episodes spanning the manuscript's prespecified strata and runs
-the same episodes through four parameterized workflow conditions.  Seed: 20260905.
+DO NOT USE THIS FOR ANY REPORTED RESULT.
+
+Each condition's unsafe-action propensity below is a hand-set constant
+(``B3: unsafe=-1.66``, ``B4: unsafe=-3.20``, plus a hardcoded 0.78 interception
+rate). Any contrast computed from this script -- including the "39.6% -> 2.1%"
+reduction quoted in an earlier draft -- restates those constants arithmetically.
+It does not measure anything, and the associated hypothesis could not have
+failed, because its answer was supplied as an input. The bootstrap interval
+describes resampling noise around an assumption.
+
+The replacement is :mod:`risk_benchmark`, which runs live tool-calling agents
+and adjudicates safety with an instrument that is independent of the
+intervention. See the repository README and ``prereg/PREREGISTRATION.md``.
+
+This is a simulation, not a clinical evaluation. It generates 384 fixed care-
+coordination episodes spanning the earlier draft's strata and runs the same
+episodes through four parameterized workflow conditions. Seed: 20260905.
 """
 from __future__ import annotations
 
