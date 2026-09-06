@@ -19,6 +19,33 @@ under four workflow conditions:
 The default seed is `20260905`. Running the script regenerates the same
 episode-level outputs and condition summaries used in the manuscript.
 
+## Executable agent-and-tool benchmark
+
+`src/risk_benchmark` is the new evaluation harness for actual tool-calling
+agents. It provides synthetic, non-identifying episode ground truth; in-memory
+EHR/scheduling/messaging tools; an independently invoked Action Safety Gateway;
+JSONL provenance logs; and tests. The original `run_synthetic_benchmark.py`
+remains available only to reproduce the manuscript's earlier parameterized
+simulation and must not be represented as a live-agent result.
+
+Run the fully offline integration harness:
+
+```bash
+PYTHONPATH=src python3 -m risk_benchmark.cli --agent scripted --episodes 16 --output results.jsonl
+PYTHONPATH=src python3 -m unittest discover -s tests -v
+```
+
+To run a real function-calling agent, configure `OPENAI_API_KEY` only in your
+local environment and use an account-approved model. This sends synthetic
+episode text—not clinical or patient data—to the API:
+
+```bash
+PYTHONPATH=src python3 -m risk_benchmark.cli --agent openai --model gpt-5 --episodes 16 --output openai_results.jsonl
+```
+
+The live run is opt-in, creates API usage, and should be preregistered before
+its results replace any manuscript table or figure.
+
 ## Run
 
 The benchmark uses only the Python standard library.
