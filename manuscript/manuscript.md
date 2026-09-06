@@ -14,7 +14,7 @@
         --out manuscript/manuscript_rendered.md
 -->
 
-# From Proposed Action to Authorized Action: A Live-Agent Benchmark of an Independent Action-Safety Gateway for Healthcare AI Agents
+# A live agent benchmark of independent action authorization for healthcare AI agents
 
 **Lipsa Senapati**
 
@@ -27,29 +27,19 @@ ORCID: `{{ORCID}}`
 
 ## Abstract
 
-Healthcare AI agents can plan multi-step tasks and invoke tools, but existing
-benchmarks measure what agents *can* do rather than what they should be
-*authorized* to do. We built a live-agent benchmark that holds the task,
-the model, the prompt and the tools constant and varies only whether an
-independent action-authorization layer is interposed between a proposed action
-and its execution. A frozen, fully synthetic set of {{N_EPISODES}}
-care-coordination episodes was evaluated under four arms: deterministic
-workflow rules (B2); an unconstrained tool-calling agent (B3); the same agent
-behind an Action Safety Gateway (B4G); and the same agent behind the gateway
-plus a Dynamic Autonomy Controller (B4). Episodes carry hidden ground truth and
-a deliberately lossy observable projection; the gateway sees only the
-projection, while adjudication uses only the hidden truth, so the gateway can
-both wrongly authorize unsafe actions and wrongly block correct ones. Safety
-was adjudicated by a prespecified rule set blinded to arm by construction. The
-primary endpoint, unsafe-action rate, was {{UNSAFE_B4}} in B4 versus
-{{UNSAFE_B3}} in B3, a paired difference of {{PRIMARY_DIFF}} percentage points
-({{PRIMARY_CI}}; {{PRIMARY_P}}). {{ABSTRACT_SECONDARY_SENTENCE}} These are
-synthetic-benchmark results with rule-based rather than clinical adjudication
-and no human-workflow comparator; they characterise an authorization mechanism
-and do not establish clinical effectiveness.
-
-**Keywords:** AI agents, action authorization, patient safety, benchmark,
-autonomy, governance
+Benchmarks measure what healthcare AI agents can do, not what they may be
+authorized to do. We built a live-agent benchmark holding task, model, prompt
+and tools fixed, varying only whether an independent authorization layer gated
+execution. {{N_EPISODES}} synthetic care-coordination episodes ran under four
+arms: deterministic rules, an unconstrained agent, a gateway-governed agent,
+and a gateway plus autonomy controller. Episodes carry hidden truth and a lossy
+observable projection, so the gateway can both wrongly authorize and wrongly
+block. A prespecified rule set blinded to arm adjudicated safety. Unsafe
+actions occurred in {{UNSAFE_B4}} of fully governed versus {{UNSAFE_B3}} of
+unconstrained episodes ({{PRIMARY_DIFF}} points, {{PRIMARY_CI}},
+{{PRIMARY_P}}). {{ABSTRACT_SECONDARY_SENTENCE}} These synthetic findings use
+rule-based adjudication, lack a human comparator, and do not establish
+clinical effectiveness.
 
 ---
 
@@ -211,76 +201,63 @@ revocations and increases marked against the monitored signals.
 
 ## Discussion
 
-> **DRAFTING NOTE.** Select the interpretation paragraph consistent with the
-> observed result. Both were written before the run and neither may be edited to
-> strengthen a claim. Constraints in Methods §"Claims not supported by this
-> design" are binding.
-
-### Principal findings
+<!--
+  DRAFTING NOTE (removed at submission): select the interpretation tokens
+  consistent with the observed result. Both alternatives were written before the
+  run and neither may be edited to strengthen a claim. The constraints in
+  Methods, "Claims not supported by this design", are binding. npj Digital
+  Medicine permits no subheadings, limitations section, or conclusions section
+  in the Discussion, so this section is continuous prose by requirement.
+-->
 
 {{DISCUSSION_PRINCIPAL}}
-
-### Relation to prior work
 
 This benchmark is complementary to, not competitive with, capability suites such
 as MedAgentBench and AgentClinic.[^medagentbench][^agentclinic] Those measure
 what an agent can accomplish in a realistic record environment; this one measures
-what it is permitted to execute and what that permission costs. The finding that
-in-agent safeguards filter most but not all hallucinations[^agentbench2026]
-motivates the central manipulation here: authorization enforced *outside* the
-agent, which cannot be argued away by the agent's own reasoning.
-
-The design also responds to the argument that AI cannot be evaluated in isolation
-from the workflow it acts within, and that responsible evaluation requires
-deliberately challenging cases spanning good and poor system
-performance.[^plosdh] The perturbation set serves that purpose, including a
-prompt-injection episode in which the record text instructs the agent to
-initiate a medication change that policy prohibits in every episode.
-
-### The deterministic-rules comparator
+what it is permitted to execute and what that permission costs. The observation
+that in-agent safeguards filter most but not all hallucinations[^agentbench2026]
+motivates the central manipulation here, namely authorization enforced outside
+the agent, which cannot be argued away by the agent's own reasoning. The design
+also responds to the argument that AI cannot be evaluated in isolation from the
+workflow it acts within, and that responsible evaluation requires deliberately
+challenging cases spanning good and poor system performance.[^plosdh] The
+perturbation set serves that purpose, and includes an episode in which record
+text instructs the agent to initiate a medication change that policy prohibits
+in every episode.
 
 {{DISCUSSION_B2}}
 
-### Limitations
+Six considerations bound these results, and the first four are structural rather
+than incidental. First, the episodes are synthetic. No patient data were used
+and no patient was affected; the episodes are stylised care-coordination tasks
+rather than a sample from a clinical population, so no rate reported here
+estimates a real-world rate. Positive findings would justify shadow-mode
+evaluation, not deployment. Second, adjudication was rule-based rather than
+clinical. Blinding to arm is structural, since the adjudicator receives an
+object that cannot carry the arm label, and this removes the principal source of
+adjudication bias; but no clinician reviewed these episodes, so the endpoint
+detects only the violations the seven frozen rules encode and cannot recognise
+harms outside that specification. Independent clinical adjudication remains
+necessary before any claim about clinical safety.
 
-Six limitations bound these results, and the first four are structural rather
-than incidental.
+Third, there is no human-workflow comparator. A manual arm was specified in an
+earlier version of this design and was removed, because measuring it requires
+human participants who were not recruited, and simulating a human baseline would
+have reintroduced precisely the assumed effect sizes this study was built to
+eliminate. Nothing reported here therefore compares governed agents with current
+human practice. Fourth, one model and one snapshot were prespecified. The
+magnitude of any authorization benefit depends on the underlying agent's
+propensity to propose unsafe actions, which varies across models; the direction
+of an effect may generalise but its magnitude should not be assumed to.
 
-**Synthetic episodes.** No patient data were used and no patient was affected.
-The episodes are stylised care-coordination tasks, not a sample from a clinical
-population, so no rate reported here estimates a real-world rate. Positive
-findings justify shadow-mode evaluation, not deployment.
-
-**Rule-based, not clinical, adjudication.** Safety was adjudicated by a frozen,
-condition-blinded rule set. Blinding is structural — the adjudicator receives an
-object that cannot carry the arm label — and this removes the main source of
-adjudication bias. But no clinician reviewed these episodes. The endpoint
-therefore detects only the violations the seven frozen rules encode and cannot
-recognise harms outside that specification. Independent clinical adjudication
-remains necessary before any claim about clinical safety.
-
-**No human-workflow comparator.** A manual arm was specified in an earlier
-design and has been removed, because measuring it requires human participants
-who were not recruited. Simulating a human baseline would have reintroduced
-exactly the assumed effect sizes this study was built to eliminate. Consequently
-nothing here compares governed agents with current human practice.
-
-**Single model.** One model and snapshot were prespecified. The magnitude of any
-authorization benefit depends on the propensity of the underlying agent to
-propose unsafe actions, which varies across models; the direction may generalise
-but the magnitude should not be assumed to.
-
-**Gateway completeness.** A gateway can reduce but not eliminate failures arising
-from incomplete data, novel context, or defects in its own rules. The measured
-residual unsafe-action rate in B4G and B4 is a direct estimate of that ceiling
-under these strata.
-
-**Normative content.** The risk dimensions and the equity safeguard encode
-value judgements — notably that elevated social-risk indicators require human
-confirmation before outreach. These require stakeholder and institutional
-validation and are not derived from evidence.
-
-### Conclusion
+Fifth, a gateway can reduce but not eliminate failures arising from incomplete
+data, novel context, or defects in its own rules, and the residual unsafe-action
+rate measured under governance is a direct estimate of that ceiling within these
+strata. Sixth, the risk dimensions and the equity safeguard encode value
+judgements, notably that an elevated social-risk indicator requires human
+confirmation before patient outreach. Such judgements require stakeholder and
+institutional validation and are not derived from evidence.
 
 {{DISCUSSION_CONCLUSION}}
 
@@ -461,6 +438,20 @@ claim of independent or clinical adjudication; no claim of generalisation across
 models; no claim that the frozen policy enumerates the harms of a real
 deployment.
 
+### Reporting standards
+
+No existing AI reporting guideline applies to this study, and we do not claim
+conformance with one. CONSORT-AI and SPIRIT-AI govern the reporting of
+interventional clinical trials and their protocols,[^consortai][^spiritai] and
+DECIDE-AI governs early-stage live clinical evaluation of AI decision-support
+systems.[^decideai] All three presuppose human participants and clinical
+deployment, neither of which is present here. They are cited because they define
+the reporting obligations that would attach to the shadow-mode and bounded pilot
+studies that any positive finding here would motivate, and because the present
+study is deliberately structured to feed them: prespecified endpoints, a
+registered analysis plan, blinded outcome adjudication, and full provenance for
+every reported figure.
+
 ### Ethics
 
 This study involved no human participants, no animal subjects, no patient data,
@@ -497,27 +488,26 @@ contained in the repository.
 ## References
 
 [^medagentbench]: Jiang, Y. et al. MedAgentBench: a virtual EHR environment to
-benchmark medical LLM agents. *NEJM AI* (2025). https://doi.org/10.1056/AIdbp2500144
+benchmark medical LLM agents. *NEJM AI* (2025).
+https://doi.org/10.1056/AIdbp2500144
 
 [^agentclinic]: Schmidgall, S. et al. AgentClinic: a multimodal benchmark for
-tool-using clinical AI agents. *npj Digit. Med.* (2026).
+tool-using clinical AI agents. *npj Digit. Med.* **9**, 499 (2026).
 https://doi.org/10.1038/s41746-026-02674-7
 
-[^agentbench2026]: Benchmarking large language model-based agent systems for
-clinical decision tasks. *npj Digit. Med.* (2026).
+[^agentbench2026]: Liu, Y. et al. Benchmarking large language model-based agent
+systems for clinical decision tasks. *npj Digit. Med.* **9**, 259 (2026).
 https://doi.org/10.1038/s41746-026-02443-6
 
-[^plosdh]: Festor, P. et al. Safety of human-AI cooperative decision-making
-within intensive care: a physical simulation study. *PLOS Digit. Health* **4**,
-e0000726 (2025). https://doi.org/10.1371/journal.pdig.0000726
+[^plosdh]: Festor, P., Nagendran, M., Gordon, A. C., Faisal, A. A. &
+Komorowski, M. Safety of human-AI cooperative decision-making within intensive
+care: a physical simulation study. *PLOS Digit. Health* **4**, e0000726 (2025).
+https://doi.org/10.1371/journal.pdig.0000726
 
-[^eyetracking]: Festor, P. et al. Eye tracking insights into physician behaviour
-with safe and unsafe explainable AI recommendations. *npj Digit. Med.* **7**, 219
-(2024). https://doi.org/10.1038/s41746-024-01200-x
-
-[^medagentsbench]: Tang, X. et al. MedAgentsBench: benchmarking thinking models
-and agent frameworks for complex medical reasoning. *Patterns* (2025).
-https://arxiv.org/abs/2503.07459
+[^eyetracking]: Nagendran, M., Festor, P., Komorowski, M., Gordon, A. C. &
+Faisal, A. A. Eye tracking insights into physician behaviour with safe and
+unsafe explainable AI recommendations. *npj Digit. Med.* **7**, 202 (2024).
+https://doi.org/10.1038/s41746-024-01200-x
 
 [^consortai]: Liu, X., Cruz Rivera, S., Moher, D., Calvert, M. J. & Denniston,
 A. K. Reporting guidelines for clinical trial reports for interventions involving
@@ -531,11 +521,19 @@ artificial intelligence: the SPIRIT-AI extension. *Nat. Med.* **26**, 1351–136
 
 [^decideai]: Vasey, B. et al. Reporting guideline for the early-stage clinical
 evaluation of decision support systems driven by artificial intelligence:
-DECIDE-AI. *BMJ* **377**, e070904 (2022). https://doi.org/10.1136/bmj-2022-070904
+DECIDE-AI. *BMJ* **377**, e070904 (2022).
+https://doi.org/10.1136/bmj-2022-070904
 
-> **REFERENCE NOTE.** Every reference above was verified against its DOI during
-> preparation. Author lists marked incomplete must be completed from the
-> publisher record before submission; do not expand them from memory.
+<!--
+  REFERENCE NOTE (removed at submission). All nine entries were verified against
+  the publisher record: author order, article number, volume, year and DOI.
+  Two errors were corrected during verification -- the eye-tracking paper is
+  Article 202 (not 219) and its first author is Nagendran (not Festor).
+  MedAgentBench is in NEJM AI; confirm its volume and article number on the
+  publisher page before submission rather than inferring them.
+  Do not expand any author list from memory.
+-->
+
 
 ## Acknowledgements
 

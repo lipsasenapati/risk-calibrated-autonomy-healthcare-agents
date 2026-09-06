@@ -8,17 +8,26 @@ your behalf; they require your accounts, your credentials, or your judgement.
 
 ---
 
-## Phase 1 — Before spending anything
+## Phase 0 — Money and permission
+
+| # | Task | Note |
+|---|---|---|
+| A | **Budget the APC: $4,290 USD** (£3,090 / €3,390) plus tax, for Original Research | npj Digital Medicine is fully open access and the APC is mandatory on acceptance. It is set by the *acceptance* date, not the submission date |
+| B | Check Springer Nature institutional agreements and DaVita eligibility | Some institutions cover the APC in full; worth checking before you pay it personally |
+| C | If requesting an APC waiver or discount, do it **at submission** | Requests made during review or after acceptance "are unable to be considered". This is irreversible if missed |
+| D | Confirm DaVita publication clearance | Employer affiliation on a healthcare-AI governance paper; resolve before submission, not after review |
+| E | Choose the licence: CC BY or CC BY-NC-ND | CC BY is required by some funders; you have no funder, so either is available |
+
+## Phase 1 — Before spending anything on API calls
 
 | # | Task | Why it blocks |
 |---|---|---|
-| 1 | Register an ORCID iD | Required by most journals; currently `PENDING` |
-| 2 | Replace the correspondence address | The earlier draft used a placeholder gmail address, which signals an unfinished submission |
-| 3 | Confirm DaVita publication clearance | Employer affiliation on a healthcare-AI governance paper; resolve before submission, not after review |
-| 4 | Pin the exact model snapshot in `prereg/PREREGISTRATION.md` §4 | A moving alias can change weights mid-study and silently break the paired comparison |
-| 5 | Commit, then record the commit SHA in prereg §0 | Ties the plan to code |
-| 6 | Run `--print-freeze`; confirm all five digests match prereg §0 | Detects any drift since the plan was written |
-| 7 | Deposit the preregistration (OSF Registries or AsPredicted) | **Must precede the run.** Record the ID and UTC timestamp in §0 |
+| 1 | ~~Register an ORCID iD~~ | **Done.** `0009-0009-4780-6953`, verified against the ORCID public API as registered to Lipsa Senapati |
+| 2 | ~~Set the correspondence address~~ | **Done.** `lipsa.email@gmail.com`. See the note below — worth reconsidering, but not blocking |
+| 3 | Pin the exact model snapshot in `prereg/PREREGISTRATION.md` §4 | A moving alias can change weights mid-study and silently break the paired comparison |
+| 4 | Commit, then record the commit SHA in prereg §0 | Ties the plan to code |
+| 5 | Run `--print-freeze`; confirm all five digests match prereg §0 | Detects any drift since the plan was written |
+| 6 | Deposit the preregistration (OSF Registries or AsPredicted) | **Must precede the run.** Record the ID and UTC timestamp in §0 |
 
 ## Phase 2 — Pilot
 
@@ -43,21 +52,46 @@ your behalf; they require your accounts, your credentials, or your judgement.
 
 | # | Task |
 |---|---|
-| 17 | `python3 scripts/render_manuscript.py --analysis outputs/analysis` (must exit 0) |
+| 17 | `python3 scripts/render_manuscript.py --analysis outputs/analysis` — must exit 0. It enforces npj Article limits on the *rendered* text and fails on unresolved tokens, uncited references, and Discussion subheadings |
 | 18 | Resolve every `[SELECT:]` placeholder using the preregistered interpretation paragraphs; do not strengthen a claim |
-| 19 | Complete the truncated author lists in the reference list from publisher records — **not from memory** |
+| 19 | Confirm MedAgentBench's NEJM AI volume and article number on the publisher page | 
 | 20 | Re-read Discussion against prereg §10 "What this study cannot establish" |
 | 21 | Confirm no sentence claims clinical effectiveness, superiority to human practice, or clinical adjudication |
+| 22 | Delete the three HTML drafting-note comments from the manuscript |
+| 23 | Fill the three suggested reviewers in `manuscript/cover_letter.md` |
+| 24 | Convert to .docx or PDF — npj accepts unformatted initial submissions in Word or PDF, but the file must be editable at acceptance |
+
+### npj Article requirements now enforced by the renderer
+
+| Requirement | Status |
+|---|---|
+| Title ≤ 15 words, free of punctuation | Fixed: was 18 words with a colon, now 13 words, no punctuation |
+| Abstract ≤ 150 words, no subheadings | Fixed: was ~230 words, now compliant *after token expansion* |
+| Discussion: no subheadings, no Limitations section, no Conclusions section | Fixed: all three were present; Discussion is now continuous prose with limitations woven in |
+| Results: subheadings used | Compliant |
+| Methods: subheadings used, all methods in main file | Compliant |
+| Data availability: mandatory | Present, separate section |
+| Code availability | Present, separate section |
+| Author contributions with initials | Present (`L.S.`) |
+| Competing interests: mandatory, state even if none | Present |
+| Funding declared in Acknowledgements, no separate Funding section | Enforced; fill `ACKNOWLEDGEMENTS` |
+| References ≤ 60 | 9 |
+| Figure legends ≤ 350 words | Compliant |
+
+Note that npj does **not** impose a total word limit and does not require
+formatting at initial submission — only the title, abstract, and section
+structure above are hard constraints.
 
 ## Phase 5 — Archive and submit
 
 | # | Task |
 |---|---|
-| 22 | Create the Zenodo deposit (link GitHub → Zenodo, then cut a release); complete `.zenodo.json` `PENDING` fields |
-| 23 | Insert the Zenodo DOI into the Data availability and Code availability sections |
-| 24 | Confirm Data availability and Code availability are **separate** sections |
-| 25 | Attach the preregistration as a supplementary file |
-| 26 | Write the cover letter: state plainly that this is a synthetic benchmark with rule-based adjudication and no human comparator |
+| 25 | Create the Zenodo deposit (link GitHub → Zenodo, then cut a release); complete `.zenodo.json` `PENDING` fields |
+| 26 | Insert the Zenodo DOI into the Data availability and Code availability sections |
+| 27 | Confirm Data availability and Code availability are **separate** sections |
+| 28 | Attach the preregistration as a supplementary file |
+| 29 | Finalise `manuscript/cover_letter.md` (drafted; needs reviewers + PENDING fields) |
+| 30 | Submit at https://submission.springernature.com/new-submission/41746/3 |
 
 ---
 
@@ -93,6 +127,18 @@ Informatics*, or *NEJM AI* (which published MedAgentBench). Strengthening it
 before submission — a second model, and one independent adjudicator rating a
 random subsample against the rule set — would materially improve the odds and
 addresses reviewer objections 2 and 3 directly.
+
+## A note on the correspondence address
+
+`lipsa.email@gmail.com` is now recorded as you specified, and npj Digital
+Medicine accepts personal addresses, so this does not block submission.
+
+One observation, offered once and then dropped: the local part `lipsa.email`
+reads like a template placeholder rather than a real address, which is the same
+signal that flagged it in the earlier draft. An editor skimming the title page
+may read it as an unfinished submission. A durable address that does not look
+generated — or an institutional one if DaVita permits external correspondence —
+would remove that impression at no cost. Your call.
 
 ## What this package does not contain
 

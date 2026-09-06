@@ -1,16 +1,12 @@
 {
   "_comment": "Non-computed manuscript fields. Every value marked PENDING must be replaced before submission; render_manuscript.py exits non-zero while any remain.",
-
-  "CORRESPONDING_EMAIL": "PENDING - institutional or durable address; the previous draft used a placeholder gmail address",
-  "ORCID": "PENDING - register at https://orcid.org and insert the iD",
-
+  "CORRESPONDING_EMAIL": "lipsa.email@gmail.com",
+  "ORCID": "0009-0009-4780-6953",
   "PREREG_ID": "PENDING - OSF Registries or AsPredicted identifier, obtained BEFORE the live run",
   "PREREG_DATE": "PENDING - UTC deposit date",
   "ZENODO_DOI": "PENDING - Zenodo DOI for the versioned archive",
   "CODE_COMMIT": "PENDING - git commit SHA archived in the Zenodo deposit",
-
   "DEVIATIONS_STATEMENT": "PENDING - either 'Section 12 of the preregistration; none were recorded' or a summary of recorded deviations",
-
-  "ACKNOWLEDGEMENTS": "PENDING - or state 'The author received no specific funding for this work.'",
-  "COMPETING_INTERESTS_EXTRA": "PENDING - confirm whether employer publication clearance is required and has been obtained, and state it if so"
+  "ACKNOWLEDGEMENTS": "PENDING - npj requires funding to be declared here; a separate Funding section is not permitted. If none, state: 'The author received no specific funding for this work.'",
+  "COMPETING_INTERESTS_EXTRA": "PENDING - confirm whether DaVita publication clearance is required and has been obtained, and state it if so"
 }

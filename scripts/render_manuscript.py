@@ -188,7 +188,13 @@ def build_tokens(analysis: Path, manual: Dict[str, str]) -> Dict[str, str]:
         "PRIMARY_INTERPRETATION",
         "[SELECT: state whether H1 was supported, using only the numbers above.]",
     )
-    tokens.setdefault("ABSTRACT_SECONDARY_SENTENCE", "[SELECT: one sentence on secondary endpoints.]")
+    # Length-representative placeholder. A six-word stub would let the abstract
+    # pass the 150-word check and then overrun once a real sentence replaced it.
+    tokens.setdefault(
+        "ABSTRACT_SECONDARY_SENTENCE",
+        "[SELECT: one sentence of about twenty words reporting task success, "
+        "human effort, and calibration with paired differences.]",
+    )
     tokens.setdefault("MECH_INTERPRETATION", "[SELECT: which component carried the effect.]")
     tokens.setdefault("DISCUSSION_PRINCIPAL", "[SELECT: preregistered interpretation paragraph.]")
     tokens.setdefault("DISCUSSION_B2", "[SELECT: interpretation of the rules comparator.]")
@@ -269,6 +275,120 @@ def render(
     return text
 
 
+# --------------------------------------------------------------------------- #
+# Journal compliance
+# --------------------------------------------------------------------------- #
+
+#: npj Digital Medicine "Article" limits, from the journal's content-types page.
+#: Checked on the *rendered* text, because token expansion changes word counts:
+#: an abstract that fits before rendering can overrun once a confidence interval
+#: expands into six words.
+TITLE_MAX_WORDS = 15
+ABSTRACT_MAX_WORDS = 150
+REQUIRED_SECTIONS = (
+    "Abstract",
+    "Introduction",
+    "Results",
+    "Discussion",
+    "Methods",
+    "Data availability",
+    "Code availability",
+    "Acknowledgements",
+    "Author contributions",
+    "Competing interests",
+)
+
+
+def _strip_markup(text: str) -> str:
+    text = re.sub(r"\[\^[^\]]+\]", " ", text)          # footnote refs
+    text = re.sub(r"<!--.*?-->", " ", text, flags=re.S)  # html comments
+    text = re.sub(r"[*_`]", "", text)                    # emphasis
+    return text
+
+
+def _section(text: str, name: str) -> str | None:
+    match = re.search(
+        rf"^##\s+{re.escape(name)}\s*$(.*?)(?=^##\s|\Z)", text, flags=re.M | re.S
+    )
+    return match.group(1) if match else None
+
+
+def check_compliance(text: str) -> List[str]:
+    """Return a list of npj Digital Medicine Article violations."""
+    problems: List[str] = []
+
+    title_match = re.search(r"^#\s+(.+)$", text, flags=re.M)
+    if not title_match:
+        problems.append("no level-1 title found")
+    else:
+        title = title_match.group(1).strip()
+        words = len(title.split())
+        if words > TITLE_MAX_WORDS:
+            problems.append(f"title is {words} words; limit is {TITLE_MAX_WORDS}")
+        # The journal requires titles "free of punctuation, idioms, and puns".
+        # Hyphens inside compound words are tolerated; terminal and clausal
+        # punctuation is not.
+        for char in ":;,.?!—":
+            if char in title:
+                problems.append(f"title contains punctuation {char!r}")
+
+    abstract = _section(text, "Abstract")
+    if abstract is None:
+        problems.append("no Abstract section found")
+    else:
+        if re.search(r"^#{3,}", abstract, flags=re.M):
+            problems.append("Abstract contains subheadings, which are not permitted")
+        words = len(_strip_markup(abstract).split())
+        if words > ABSTRACT_MAX_WORDS:
+            problems.append(
+                f"abstract is {words} words after token expansion; "
+                f"limit is {ABSTRACT_MAX_WORDS}"
+            )
+
+    discussion = _section(text, "Discussion")
+    if discussion is None:
+        problems.append("no Discussion section found")
+    else:
+        if re.search(r"^#{3,}\s", discussion, flags=re.M):
+            problems.append(
+                "Discussion contains subheadings; npj permits none, and no "
+                "limitations or conclusions sections"
+            )
+        for banned in ("Limitations", "Conclusion"):
+            if re.search(rf"^#+\s*{banned}", discussion, flags=re.M | re.I):
+                problems.append(f"Discussion contains a {banned} heading, which is not permitted")
+
+    if _section(text, "Results") and not re.search(
+        r"^###\s", _section(text, "Results"), flags=re.M
+    ):
+        problems.append("Results should use subheadings")
+
+    for name in REQUIRED_SECTIONS:
+        if _section(text, name) is None:
+            problems.append(f"missing required section: {name}")
+
+    if re.search(r"^##\s+Funding\s*$", text, flags=re.M):
+        problems.append(
+            "a separate Funding section is not permitted; declare funding in Acknowledgements"
+        )
+
+    refs = _section(text, "References") or ""
+    defined = set(re.findall(r"^\[\^([^\]]+)\]:", refs, flags=re.M))
+    if len(defined) > 60:
+        problems.append(f"{len(defined)} references; the guideline limit is 60")
+
+    # Uncited definitions and undefined citations are both defects, and both are
+    # easy to introduce while restructuring sections.
+    body = text[: text.find("## References")] if "## References" in text else text
+    cited = set(re.findall(r"\[\^([^\]]+)\]", body))
+    for key in sorted(defined - cited):
+        problems.append(f"reference defined but never cited: {key}")
+    for key in sorted(cited - defined):
+        problems.append(f"reference cited but not defined: {key}")
+
+    return problems
+
+
 def main(argv: List[str] | None = None) -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--manuscript", default="manuscript/manuscript.md")
@@ -291,9 +411,19 @@ def main(argv: List[str] | None = None) -> None:
     out = Path(args.out)
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(text)
+    print(f"Rendered {out} ({len(text.splitlines())} lines)")
+
+    problems = check_compliance(text)
+    if problems:
+        print("\nnpj Digital Medicine Article compliance FAILED:")
+        for problem in problems:
+            print(f"  - {problem}")
+    else:
+        print("npj Digital Medicine Article compliance: OK")
 
     placeholders = text.count("[SELECT:") + text.count("PENDING")
-    print(f"Rendered {out} ({len(text.splitlines())} lines)")
+    if problems:
+        sys.exit(3)
     if placeholders:
         print(
             f"WARNING: {placeholders} placeholder(s) remain that require a human "
