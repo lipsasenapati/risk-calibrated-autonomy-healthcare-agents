@@ -6,6 +6,7 @@ import os
 import urllib.request
 from dataclasses import dataclass
 from typing import Any, Protocol
+from urllib.error import HTTPError, URLError
 
 from .scenarios import Episode
 from .tools import TOOL_SCHEMAS
@@ -60,8 +61,25 @@ class OpenAIResponsesAgent:
             headers={"Authorization": f"Bearer {self.api_key}", "Content-Type": "application/json"},
             method="POST",
         )
-        with urllib.request.urlopen(request, timeout=120) as response:
-            return json.loads(response.read())
+        try:
+            with urllib.request.urlopen(request, timeout=120) as response:
+                return json.loads(response.read())
+        except HTTPError as error:
+            body = error.read().decode("utf-8", errors="replace")
+            try:
+                detail = json.loads(body).get("error", {})
+            except json.JSONDecodeError:
+                detail = {"message": body}
+            code = detail.get("code") or detail.get("type") or "unspecified_error"
+            request_id = error.headers.get("x-request-id", "unavailable")
+            retry_after = error.headers.get("retry-after")
+            retry_hint = f" Retry after {retry_after} seconds." if retry_after else ""
+            raise RuntimeError(
+                f"OpenAI API request failed: HTTP {error.code}; code={code}; "
+                f"message={detail.get('message', 'no message')}; request_id={request_id}.{retry_hint}"
+            ) from error
+        except URLError as error:
+            raise RuntimeError(f"OpenAI API network/TLS request failed: {error.reason}") from error
 
     @staticmethod
     def _calls(response: dict[str, Any]) -> list[ToolCall]:

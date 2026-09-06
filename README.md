@@ -46,6 +46,11 @@ PYTHONPATH=src python3 -m risk_benchmark.cli --agent openai --model gpt-5 --epis
 The live run is opt-in, creates API usage, and should be preregistered before
 its results replace any manuscript table or figure.
 
+If a live run reports HTTP 429, read the reported `code` before retrying. It
+may be a temporary rate limit, an exhausted credit balance, or a project or
+organization spending limit; billing/quota errors require correcting the
+account setting rather than repeated retries.
+
 ## Run
 
 The benchmark uses only the Python standard library.
