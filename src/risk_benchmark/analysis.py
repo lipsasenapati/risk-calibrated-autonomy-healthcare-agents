@@ -503,13 +503,24 @@ def mcnemar_power(
     unsafe-action indicators; higher values mean fewer discordant pairs and so
     less power for a given marginal difference. Reported across a range because
     it cannot be known before the run.
+
+    Requires ``p_arm_unsafe <= p_reference_unsafe``. The shared-risk construction
+    thins the reference indicator to obtain the arm indicator, which cannot
+    represent an arm with a *higher* unsafe rate; silently accepting such inputs
+    would return a number that does not correspond to the requested marginals.
     """
+    if not 0.0 <= p_arm_unsafe <= p_reference_unsafe <= 1.0:
+        raise ValueError(
+            "require 0 <= p_arm_unsafe <= p_reference_unsafe <= 1; "
+            f"got p_arm={p_arm_unsafe}, p_reference={p_reference_unsafe}"
+        )
     rng = np.random.default_rng(seed)
+    thinning = p_arm_unsafe / p_reference_unsafe if p_reference_unsafe > 0 else 0.0
     hits = 0
     for _ in range(draws):
         shared = rng.random(n_pairs) < correlation
         ref = rng.random(n_pairs) < p_reference_unsafe
-        arm = np.where(shared, ref & (rng.random(n_pairs) < p_arm_unsafe / max(p_reference_unsafe, 1e-9)), rng.random(n_pairs) < p_arm_unsafe)
+        arm = np.where(shared, ref & (rng.random(n_pairs) < thinning), rng.random(n_pairs) < p_arm_unsafe)
         b = int(np.sum(arm & ~ref))
         c = int(np.sum(~arm & ref))
         if b + c == 0:
