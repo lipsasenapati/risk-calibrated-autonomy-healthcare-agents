@@ -1,0 +1,26 @@
+Synthetic benchmark; deterministic seed 20260905; 384 episodes x 4 conditions.
+
+{'condition': 'B1', 'n': 384, 'unsafe_rate': 0.10416666666666667, 'routine_success': 0.3229166666666667, 'perturbed_success': 0.2552083333333333, 'time_min': 49.683420988419044, 'interventions': 2.6540294126915907, 'escalation_accuracy': 0.7760416666666666, 'ece': 0.2448460871616939, 'tool_reliability': 0.8307291666666666, 'cost_per_success': 118.12078618977164, 'autonomous_rate': 0.0}
+{'condition': 'B2', 'n': 384, 'unsafe_rate': 0.16145833333333334, 'routine_success': 0.4114583333333333, 'perturbed_success': 0.23958333333333334, 'time_min': 27.6442133525801, 'interventions': 1.7536511963827206, 'escalation_accuracy': 0.7552083333333334, 'ece': 0.31364150371777805, 'tool_reliability': 0.7005208333333334, 'cost_per_success': 61.95345949155085, 'autonomous_rate': 0.0}
+{'condition': 'B3', 'n': 384, 'unsafe_rate': 0.3958333333333333, 'routine_success': 0.5625, 'perturbed_success': 0.3177083333333333, 'time_min': 16.51132975686581, 'interventions': 0.8655122523337401, 'escalation_accuracy': 0.4739583333333333, 'ece': 0.3355192434710877, 'tool_reliability': 0.4244791666666667, 'cost_per_success': 44.74549900591952, 'autonomous_rate': 1.0}
+{'condition': 'B4', 'n': 384, 'unsafe_rate': 0.020833333333333332, 'routine_success': 0.5416666666666666, 'perturbed_success': 0.4010416666666667, 'time_min': 19.394480392983493, 'interventions': 1.286886186894317, 'escalation_accuracy': 0.875, 'ece': 0.28081697606972594, 'tool_reliability': 0.875, 'cost_per_success': 49.98805265282723, 'autonomous_rate': 0.0703125}
+
+B4 minus B3 bootstrap comparisons
+{'outcome': 'unsafe', 'b4_minus_b3': -0.375, 'ci_low': -0.4270833333333333, 'ci_high': -0.3229166666666667}
+{'outcome': 'success', 'b4_minus_b3': 0.03125, 'ci_low': -0.036458333333333336, 'ci_high': 0.1015625}
+{'outcome': 'time_min', 'b4_minus_b3': 2.883150636117685, 'ci_low': 2.541696342026149, 'ci_high': 3.225890961465377}
+{'outcome': 'interventions', 'b4_minus_b3': 0.421373934560577, 'ci_low': 0.3937152398566053, 'ci_high': 0.44989196026715034}
+{'outcome': 'escalation_correct', 'b4_minus_b3': 0.4010416666666667, 'ci_low': 0.34375, 'ci_high': 0.4557291666666667}
+{'outcome': 'tool_reliable', 'b4_minus_b3': 0.4505208333333333, 'ci_low': 0.3880208333333333, 'ci_high': 0.5130208333333334}
+
+B4 autonomy transitions: {'hold': 247, 'upward transition': 2, 'forced reduction': 135}
+
+Social-risk success / unsafe rates
+('B1', 'High'): 0.323 / 0.089
+('B1', 'Low'): 0.255 / 0.120
+('B2', 'High'): 0.411 / 0.115
+('B2', 'Low'): 0.240 / 0.208
+('B3', 'High'): 0.562 / 0.344
+('B3', 'Low'): 0.318 / 0.448
+('B4', 'High'): 0.542 / 0.031
+('B4', 'Low'): 0.401 / 0.010

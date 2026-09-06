@@ -1,0 +1,4 @@
+__pycache__/
+*.py[cod]
+benchmark_results/
+.DS_Store
