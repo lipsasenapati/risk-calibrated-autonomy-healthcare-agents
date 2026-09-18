@@ -114,17 +114,26 @@ error-free with respect to adjudicated truth.
 
 | Item | Value |
 |---|---|
-| Primary model | `PENDING — fix exact model and snapshot id before deposit, e.g. gpt-4.1-2025-04-14` |
+| Primary model | `gpt-4.1-mini-2025-04-14` |
 | Sampling | Provider default; temperature not set unless recorded in provenance |
 | `store` | `false` (no server-side retention) |
-| Replicates | 3 independent runs of every arm at every replicate index |
+| Replicates | 1 run of every arm (reduced from 3; see rationale below) |
 | Max steps per episode | 8 |
 | Retry policy | Up to 5 attempts on HTTP 429/5xx with exponential backoff; non-retryable on `insufficient_quota` |
 
 A single primary model is prespecified. Any additional model is exploratory and
-will be labelled as such. The exact snapshot identifier must be pinned before
+will be labelled as such. The exact snapshot identifier is pinned before
 deposit; "latest alias" runs are not acceptable because the underlying weights
 can change mid-study.
+
+**Cost-driven scope reduction, fixed before deposit.** The primary model is a
+smaller, cheaper snapshot than originally drafted, and replicates are fixed at
+1 rather than 3. This is a budget decision made before registration, not a
+post hoc deviation: §8 shows power at 576 paired episodes already meets or
+exceeds 0.79 for the smallest effect of interest at a single replicate:
+replication above 1 characterises model stochasticity and is not required for
+the primary test. Because this is fixed here, before any agent is run, it is
+part of the plan rather than a departure from it.
 
 ## 5. Outcomes
 
@@ -261,18 +270,22 @@ and human-effort costs the same design imposes.
 ## 9. Cost and stopping
 
 Estimated live-run token cost, assuming ~3 requests per episode and ~4 500
-input / ~450 output tokens per request:
+input / ~450 output tokens per request, at `gpt-4.1-mini-2025-04-14` pricing:
 
 | Component | Episode-runs | Estimated cost |
 |---|---|---|
-| B3, B4G, B4 × 3 replicates | 5 184 | ≈ $65 |
-| B4G at strict and permissive (Figure 1 frontier) × 3 replicates | 3 456 | ≈ $43 |
-| **Total** | **8 640** | **≈ $110** |
+| B3, B4G, B4 × 1 replicate | 1 728 | ≈ $4–7 |
+| B4G at strict and permissive (Figure 1 frontier) × 1 replicate | 1 152 | ≈ $3–5 |
+| **Total** | **2 880** | **≈ $7–12** |
 
-These are estimates. A 16-episode pilot will be run first and actual token
-usage read from the provenance record; if measured cost exceeds the estimate by
-more than 100 %, the replicate count is reduced to 2 and the deviation recorded
-in §12. Cost is not a stopping rule for the primary endpoint: no interim
+These are estimates from a smaller, cheaper model than the original draft
+(§4), scaled down from a prior $110 estimate that assumed 3 replicates of a
+larger model; both changes were made before deposit for budget reasons, not as
+a post hoc reaction to cost. A 16-episode pilot will still be run first and
+actual token usage read from the provenance record; if measured cost exceeds
+this estimate by more than 100 %, the run is limited to the primary component
+only (dropping the Figure 1 frontier) and the deviation is recorded in §12.
+Cost is not a stopping rule for the primary endpoint itself: no interim
 analysis of the primary endpoint will be performed, and the run will not be
 stopped early on the basis of observed results.
 
