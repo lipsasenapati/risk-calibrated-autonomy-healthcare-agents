@@ -10,7 +10,7 @@ as preregistered until it has been deposited with a timestamping registry (see
 | Deposit timestamp (UTC) | `PENDING` |
 | Principal investigator | Lipsa Senapati |
 | Code repository | https://github.com/lipsasenapati/risk-calibrated-autonomy-healthcare-agents |
-| Code commit frozen for this plan | `PENDING — insert commit SHA at deposit` |
+| Code commit frozen for this plan | `6c29a78` |
 | Human subjects | None. No human participants, no patient data, no identifiable information. |
 
 ## 0. Freeze record
