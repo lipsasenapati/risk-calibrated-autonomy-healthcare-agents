@@ -202,7 +202,12 @@ class OpenAIResponsesAgent:
     temperature: float | None = None
     max_retries: int = 5
     endpoint: str = "https://api.openai.com/v1/responses"
-    _previous_id: str | None = field(default=None, init=False)
+    # Conversation state is reconstructed client-side each call, not via
+    # ``previous_response_id``: that mechanism requires the referenced
+    # response to have been stored server-side, which contradicts
+    # ``store: false``. Chaining by ID against an unstored response fails
+    # with ``previous_response_not_found`` on every multi-step episode.
+    _history: list[dict[str, Any]] = field(default_factory=list, init=False)
     _usage: dict[str, int] = field(default_factory=lambda: {"input_tokens": 0, "output_tokens": 0, "requests": 0}, init=False)
 
     def __post_init__(self) -> None:
@@ -291,25 +296,27 @@ class OpenAIResponsesAgent:
         return calls
 
     def start(self, episode: Episode, observation: Observation) -> list[ToolCall]:
+        self._history = [{"role": "user", "content": episode_brief(episode)}]
         response = self._request(
             {
                 **self._base_payload(),
                 "instructions": SYSTEM_PROMPT,
-                "input": episode_brief(episode),
+                "input": self._history,
             }
         )
-        self._previous_id = response["id"]
+        self._history.extend(response.get("output", []))
         return self._calls(response)
 
     def continue_with(self, outputs: list[dict[str, Any]]) -> list[ToolCall]:
+        self._history.extend(outputs)
         response = self._request(
             {
                 **self._base_payload(),
-                "previous_response_id": self._previous_id,
-                "input": outputs,
+                "instructions": SYSTEM_PROMPT,
+                "input": self._history,
             }
         )
-        self._previous_id = response["id"]
+        self._history.extend(response.get("output", []))
         return self._calls(response)
 
 
