@@ -1,0 +1,3 @@
+contrast,endpoint,arm,reference,n_pairs,estimate_B4G,estimate_B3,difference,ci_low,ci_high,p_value,test,estimate_B4
+B4G vs B3 (gateway only),unsafe_action,B4G,B3,576,0.0017,0.0035,-0.0017,-0.0052,0.0,1.0,exact McNemar,
+B4 vs B4G (controller added),unsafe_action,B4,B4G,576,0.0017,,0.0052,-0.0017,0.0139,0.375,exact McNemar,0.0069

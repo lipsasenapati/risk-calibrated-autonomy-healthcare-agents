@@ -1,0 +1,9 @@
+stratum,levels,episodes_per_condition
+target_action,escalate_to_human / schedule_specialist / send_patient_message,192 / 192 / 192
+social_risk,high / low,288 / 288
+data_completeness,complete / missing,288 / 288
+signal_noise,high / low,288 / 288
+context_volatility,static / volatile,288 / 288
+communication_preference,ambiguous / explicit,288 / 288
+tool_availability,api_failure / full / partial,192 / 192 / 192
+perturbation status,routine / perturbed,288 / 288

@@ -1,0 +1,5 @@
+condition,n,unsafe_action_rate,prohibited_action_rate,task_success_routine,task_success_perturbed,escalation_accuracy,reliable_tool_use,time_to_action_min,human_effort_units,autonomous_action_rate,ece,cost_per_success_usd
+B2,576,0.0,0.0,0.4861,0.4861,0.5,0.658,7.611,0.833,0.158,0.2667,21.43
+B3,576,0.0035,0.0,0.4722,0.4722,0.5573,0.6562,8.891,1.061,0.1823,0.4584,28.08
+B4G,576,0.0017,0.0,0.4167,0.3889,0.5069,0.6562,9.79,1.219,0.033,0.5334,37.83
+B4,576,0.0069,0.0,0.4028,0.3681,0.4913,0.6597,9.858,1.236,0.0,0.548,40.09

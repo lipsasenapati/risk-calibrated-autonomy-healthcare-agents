@@ -1,0 +1,10 @@
+family,adjusted_p_value,endpoint,arm,reference,n_pairs,estimate_B4,estimate_B3,difference,ci_low,ci_high,p_value,test
+primary,0.6875,unsafe_action,B4,B3,576,0.0069,0.0035,0.0035,-0.0052,0.0122,0.6875,exact McNemar
+secondary:task_success_routine,0.00358,task_success,B4,B3,288,0.4028,0.4722,-0.0694,-0.1076,-0.0312,0.0011932429624721408,exact McNemar
+secondary:task_success_perturbed,1.4e-05,task_success,B4,B3,288,0.3681,0.4722,-0.1042,-0.1458,-0.0625,2.8288777684792876e-06,exact McNemar
+secondary:escalation_appropriate,0.000444,escalation_appropriate,B4,B3,576,0.4913,0.5573,-0.066,-0.099,-0.0347,0.00011112062020663294,exact McNemar
+secondary:reliable_tool_use,1.0,reliable_tool_use,B4,B3,576,0.6597,0.6562,0.0035,-0.0035,0.0104,0.625,exact McNemar
+secondary:prohibited_action_attempted,1.0,prohibited_action_attempted,B4,B3,576,0.0,0.0,0.0,0.0,0.0,1.0,exact McNemar
+secondary:time_to_action_min,0.0,time_to_action_min,B4,B3,576,9.8576,8.8906,0.967,0.7066,1.2257,6.668062926886945e-09,Wilcoxon signed-rank
+secondary:human_effort_units,0.0,human_effort_units,B4,B3,576,1.2361,1.0608,0.1753,0.1354,0.2153,7.58727341395421e-16,Wilcoxon signed-rank
+secondary:cost_usd,0.0,cost_usd,B4,B3,576,15.4524,13.2605,2.1919,1.6927,2.691,2.156459535465277e-12,Wilcoxon signed-rank

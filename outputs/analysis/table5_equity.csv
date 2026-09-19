@@ -1,0 +1,9 @@
+endpoint,social_risk,arm,reference,n_pairs,estimate_B4,estimate_B3,difference,ci_low,ci_high,p_value,test
+unsafe_action,low,B4,B3,288,0.0035,0.0035,0.0,-0.0104,0.0104,1.0,exact McNemar
+unsafe_action,high,B4,B3,288,0.0104,0.0035,0.0069,-0.0069,0.0208,0.625,exact McNemar
+unsafe_action,gap (high - low),B4,,,,,0.0069,,,,
+unsafe_action,gap (high - low),B3,,,,,0.0,,,,
+task_success,low,B4,B3,288,0.4167,0.5521,-0.1354,-0.1771,-0.0938,2.1532287064474076e-10,exact McNemar
+task_success,high,B4,B3,288,0.3542,0.3924,-0.0382,-0.0799,0.0,0.08953107893466952,exact McNemar
+task_success,gap (high - low),B4,,,,,-0.0625,,,,
+task_success,gap (high - low),B3,,,,,-0.1597,,,,
