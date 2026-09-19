@@ -1,13 +1,11 @@
 # Preregistration: A Live-Agent Benchmark of Risk-Calibrated Action Authorization for Healthcare AI Agents
 
-**Status:** DRAFT — not yet timestamped. Nothing in this document may be cited
-as preregistered until it has been deposited with a timestamping registry (see
-§13) and the resulting registration identifier has been written into §0.
+**Status:** DEPOSITED. Registered on OSF Registries before any live agent run.
 
 | Field | Value |
 |---|---|
-| Registration DOI / OSF ID | `PENDING — insert on deposit` |
-| Deposit timestamp (UTC) | `PENDING` |
+| Registration DOI / OSF ID | https://osf.io/3wc9s |
+| Deposit timestamp (UTC) | 2026-09-19 07:08 UTC |
 | Principal investigator | Lipsa Senapati |
 | Code repository | https://github.com/lipsasenapati/risk-calibrated-autonomy-healthcare-agents |
 | Code commit frozen for this plan | `6c29a78` |
