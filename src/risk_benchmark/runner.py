@@ -60,11 +60,38 @@ CONTROLLED_ARMS = frozenset({"B4"})
 LLM_ARMS = frozenset({"B3", "B4", "B4G"})
 ALL_ARMS = ("B2", "B3", "B4G", "B4")
 
-#: Prespecified token prices (USD per 1M tokens) used for the cost endpoint.
-#: Recorded so the cost analysis is reproducible independent of later repricing.
-TOKEN_PRICES_USD_PER_M = {"input": 2.00, "output": 8.00}
+#: Prespecified token prices (USD per 1M tokens) used for the cost endpoint,
+#: keyed by model snapshot prefix. Recorded so the cost analysis is
+#: reproducible independent of later repricing. A single flat price was
+#: previously used regardless of which model was actually run, which
+#: overstated cost for any model cheaper than gpt-4.1 (e.g. by 5x for
+#: gpt-4.1-mini). Add new snapshots here as they are used.
+MODEL_TOKEN_PRICES_USD_PER_M = {
+    "gpt-4.1-nano": {"input": 0.10, "output": 0.40},
+    "gpt-4.1-mini": {"input": 0.40, "output": 1.60},
+    "gpt-4.1": {"input": 2.00, "output": 8.00},
+}
+#: Fallback for non-LLM arms (B2), where token usage is always zero and the
+#: price table is therefore inert.
+TOKEN_PRICES_USD_PER_M = MODEL_TOKEN_PRICES_USD_PER_M["gpt-4.1"]
 #: Nominal loaded cost of one unit of human coordinator effort (USD).
 HUMAN_EFFORT_COST_USD = 12.50
+
+
+def token_prices_for_model(model: str) -> dict[str, float]:
+    """Resolve the USD-per-1M-token price for a pinned model snapshot.
+
+    Matches the longest known prefix first, so ``gpt-4.1-mini-2025-04-14``
+    resolves to the mini price rather than the generic ``gpt-4.1`` price.
+    """
+    for prefix in sorted(MODEL_TOKEN_PRICES_USD_PER_M, key=len, reverse=True):
+        if model.startswith(prefix):
+            return MODEL_TOKEN_PRICES_USD_PER_M[prefix]
+    raise ValueError(
+        f"No known token price for model {model!r}; add it to "
+        "MODEL_TOKEN_PRICES_USD_PER_M before running, so cost is not silently "
+        "misreported under the wrong price table."
+    )
 
 MAX_STEPS = 8
 
@@ -112,10 +139,12 @@ def _terminal_confidence(audit: list[dict[str, Any]]) -> float | None:
     return None
 
 
-def _episode_cost(usage: dict[str, int], human_effort: float) -> float:
+def _episode_cost(
+    usage: dict[str, int], human_effort: float, token_prices: dict[str, float]
+) -> float:
     tokens = (
-        usage.get("input_tokens", 0) / 1e6 * TOKEN_PRICES_USD_PER_M["input"]
-        + usage.get("output_tokens", 0) / 1e6 * TOKEN_PRICES_USD_PER_M["output"]
+        usage.get("input_tokens", 0) / 1e6 * token_prices["input"]
+        + usage.get("output_tokens", 0) / 1e6 * token_prices["output"]
     )
     return round(tokens + human_effort * HUMAN_EFFORT_COST_USD, 4)
 
@@ -128,10 +157,12 @@ class BenchmarkRunner:
         agent_factory: Callable[..., Agent],
         strictness: str = PRIMARY_STRICTNESS,
         max_steps: int = MAX_STEPS,
+        token_prices: dict[str, float] | None = None,
     ):
         self.agent_factory = agent_factory
         self.strictness = strictness
         self.max_steps = max_steps
+        self.token_prices = token_prices or TOKEN_PRICES_USD_PER_M
 
     # -- single episode ----------------------------------------------------- #
 
@@ -267,7 +298,7 @@ class BenchmarkRunner:
             executed_tools=[e["tool"] for e in env.audit],
             proposed_tools=proposed,
             usage=usage,
-            cost_usd=_episode_cost(usage, human_effort),
+            cost_usd=_episode_cost(usage, human_effort, self.token_prices),
             audit=env.audit,
         )
 
@@ -300,6 +331,11 @@ def run_paired(
     contrast.
     """
     episodes = generate_episodes(episode_limit)
+    resolved_prices = (
+        token_prices_for_model(model or "gpt-4.1")
+        if agent_name == "openai"
+        else TOKEN_PRICES_USD_PER_M
+    )
 
     def factory_for(condition: str) -> Callable[..., Agent]:
         """Bind the agent for an arm.
@@ -323,7 +359,9 @@ def run_paired(
     transitions: list[dict[str, Any]] = []
     for replicate in range(replicates):
         for condition in conditions:
-            runner = BenchmarkRunner(factory_for(condition), strictness=strictness)
+            runner = BenchmarkRunner(
+                factory_for(condition), strictness=strictness, token_prices=resolved_prices
+            )
             results, controller = runner.run_arm(condition, episodes, replicate=replicate)
             rows.extend(asdict(r) for r in results)
             if controller:
@@ -349,7 +387,7 @@ def run_paired(
             "controller_digest": controller_digest(),
             "prompt_version": PROMPT_VERSION,
             "prompt_digest": prompt_digest(),
-            "token_prices_usd_per_m": TOKEN_PRICES_USD_PER_M,
+            "token_prices_usd_per_m": resolved_prices,
             "human_effort_cost_usd": HUMAN_EFFORT_COST_USD,
             "python": sys.version.split()[0],
             "platform": platform.platform(),
