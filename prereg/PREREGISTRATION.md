@@ -22,9 +22,9 @@ reported in §12.
 | Artefact | SHA-256 |
 |---|---|
 | Episode set (576 episodes, v2.0.0) | `934c943ed377db722fd69909f3d3a28ff3f8b5399ef808404819eb2d5ad8f1e5` |
-| Adjudication policy (v1.0.0) | `a931ba5c94577daa195a770cfdfd5ff9d98777fa1d6e7c371d7e7ff0d674b9be` |
-| Action Safety Gateway (v1.0.0) | `d7390a0f569df3c4f6a167c82bbdb397e934f87728e8d1b90fc3f01a5393db69` |
-| Dynamic Autonomy Controller (v1.0.0) | `ab6eaaad7179cf4c8e797e42e181cbf15b35864cf743587e569ff89a003598c4` |
+| Adjudication policy (v1.0.0) | `cf8268364910f067ab08e762fd11e37694eb840e2aed8c44640e306b7895d38d` |
+| Action Safety Gateway (v1.0.0) | `b360502bc3ff225a7dd7bb2591ee38769c6829ca38aa1ea3c192bb36e7d02e02` |
+| Dynamic Autonomy Controller (v1.0.0) | `f9f7fc9f74e12ecc45081a4b1be5eea130ced35bb3aa38e6c49b6aabf0ead21e` |
 | System prompt + tool schemas (v1.0.0) | `0e0c0db2bc87cb6876eb6c784a9a775b2fdd62dd50c9c5f1e3768ddde5a00993` |
 
 The policy, gateway, and controller digests changed on 2026-09-19 from their
@@ -33,10 +33,13 @@ a bug fix, not a behavioural change: `policy_digest`, `gateway_digest`, and
 `controller_digest` previously hashed `inspect.getsource(...)` output, which is
 not guaranteed byte-stable across Python versions (confirmed to differ between
 Python 3.8.1 and 3.11.5 despite byte-identical source files, verified via
-`shasum -a 256`). All three now hash the raw module source file directly. The
-full test suite (38 tests) passes unchanged before and after. This is recorded
-as a deviation in §12; it was made before any agent was run under any
-condition other than the CI-only scripted agent.
+`shasum -a 256`). All three now hash their own module's raw source file
+directly with an explicit `utf-8` encoding. Because each function hashes its
+own file, the values above reflect the digest functions' final, stable form
+(commit `07063ac` and its follow-up fix); further edits to unrelated code will
+not change them. The full test suite (38 tests) passes unchanged throughout.
+This is recorded as a deviation in §12; it was made before any agent was run
+under any condition other than the CI-only scripted agent.
 
 Every run writes these digests into its output file's provenance record, so any
 reported result can be checked against this freeze.

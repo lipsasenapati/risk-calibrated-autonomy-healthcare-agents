@@ -208,7 +208,7 @@ def controller_digest() -> str:
             f"{ERROR_RATE_HOLD}|{MIN_EXPOSURE_FOR_PROMOTION}",
             json.dumps(STATE_STRICTNESS, sort_keys=True),
             json.dumps(STATE_AUTONOMOUS_WRITE_BUDGET, sort_keys=True),
-            Path(__file__).read_text(),
+            Path(__file__).read_text(encoding="utf-8"),
         ]
     )
     return hashlib.sha256(payload.encode()).hexdigest()

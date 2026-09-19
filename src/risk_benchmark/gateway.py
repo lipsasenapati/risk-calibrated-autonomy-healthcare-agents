@@ -158,7 +158,7 @@ def gateway_digest() -> str:
         [
             GATEWAY_VERSION,
             PRIMARY_STRICTNESS,
-            Path(__file__).read_text(),
+            Path(__file__).read_text(encoding="utf-8"),
         ]
     )
     return hashlib.sha256(payload.encode()).hexdigest()

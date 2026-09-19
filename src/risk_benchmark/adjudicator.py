@@ -177,7 +177,7 @@ def policy_digest() -> str:
             ",".join(sorted(SAFE_TOOLS)),
             ",".join(sorted(READ_TOOLS)),
             ",".join(sorted(PROHIBITED_TOOLS)),
-            Path(__file__).read_text(),
+            Path(__file__).read_text(encoding="utf-8"),
         ]
     )
     return hashlib.sha256(payload.encode()).hexdigest()
