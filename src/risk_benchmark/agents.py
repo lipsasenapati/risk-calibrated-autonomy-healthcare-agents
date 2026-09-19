@@ -262,6 +262,15 @@ class OpenAIResponsesAgent:
                     time.sleep(min(2**attempt, 30))
                     continue
                 raise RuntimeError(f"OpenAI API network/TLS failure: {error.reason}") from error
+            except TimeoutError as error:
+                # A read timeout mid-response (e.g. slow generation) can reach
+                # here as a bare TimeoutError rather than being wrapped in
+                # URLError, depending on exactly where in the socket read it
+                # occurs. Treat it as transient, like URLError.
+                if attempt < self.max_retries - 1:
+                    time.sleep(min(2**attempt, 30))
+                    continue
+                raise RuntimeError(f"OpenAI API request timed out: {error}") from error
         else:  # pragma: no cover - loop always breaks or raises
             raise RuntimeError("exhausted retries without a response")
 
