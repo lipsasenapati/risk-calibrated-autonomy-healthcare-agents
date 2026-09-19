@@ -8,7 +8,7 @@
 | Deposit timestamp (UTC) | 2026-09-19 07:08 UTC |
 | Principal investigator | Lipsa Senapati |
 | Code repository | https://github.com/lipsasenapati/risk-calibrated-autonomy-healthcare-agents |
-| Code commit frozen for this plan | `6c29a78` |
+| Code commit frozen for this plan | `190ee6e` |
 | Human subjects | None. No human participants, no patient data, no identifiable information. |
 
 ## 0. Freeze record
