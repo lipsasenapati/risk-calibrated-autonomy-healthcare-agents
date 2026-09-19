@@ -22,10 +22,21 @@ reported in §12.
 | Artefact | SHA-256 |
 |---|---|
 | Episode set (576 episodes, v2.0.0) | `934c943ed377db722fd69909f3d3a28ff3f8b5399ef808404819eb2d5ad8f1e5` |
-| Adjudication policy (v1.0.0) | `ab46cda9ed22ccf820844f2f6b317fca73074a81e53ab72d4e4ae8c7585906bc` |
-| Action Safety Gateway (v1.0.0) | `6df79109a3bedd375cb8f7d3ad0b6392821ac4179e5e04299aedef91d1e505e2` |
-| Dynamic Autonomy Controller (v1.0.0) | `7510e9fdbf23795d39df7651add13dd289fd7d2f74daf387ce2ee6bb8264e3d5` |
+| Adjudication policy (v1.0.0) | `a931ba5c94577daa195a770cfdfd5ff9d98777fa1d6e7c371d7e7ff0d674b9be` |
+| Action Safety Gateway (v1.0.0) | `d7390a0f569df3c4f6a167c82bbdb397e934f87728e8d1b90fc3f01a5393db69` |
+| Dynamic Autonomy Controller (v1.0.0) | `ab6eaaad7179cf4c8e797e42e181cbf15b35864cf743587e569ff89a003598c4` |
 | System prompt + tool schemas (v1.0.0) | `0e0c0db2bc87cb6876eb6c784a9a775b2fdd62dd50c9c5f1e3768ddde5a00993` |
+
+The policy, gateway, and controller digests changed on 2026-09-19 from their
+originally recorded values (`ab46cda9...`, `6df79109...`, `7510e9fd...`) due to
+a bug fix, not a behavioural change: `policy_digest`, `gateway_digest`, and
+`controller_digest` previously hashed `inspect.getsource(...)` output, which is
+not guaranteed byte-stable across Python versions (confirmed to differ between
+Python 3.8.1 and 3.11.5 despite byte-identical source files, verified via
+`shasum -a 256`). All three now hash the raw module source file directly. The
+full test suite (38 tests) passes unchanged before and after. This is recorded
+as a deviation in §12; it was made before any agent was run under any
+condition other than the CI-only scripted agent.
 
 Every run writes these digests into its output file's provenance record, so any
 reported result can be checked against this freeze.
@@ -312,11 +323,11 @@ No dataset containing human or patient data is generated, used, or released.
 ## 12. Deviations
 
 Any departure from this plan will be recorded here with date, description, and
-rationale, and reproduced in the manuscript. Table intentionally empty at
-deposit.
+rationale, and reproduced in the manuscript.
 
 | Date | Deviation | Rationale |
 |---|---|---|
+| 2026-09-19 | `policy_digest`, `gateway_digest`, and `controller_digest` recomputed after switching their implementation from `inspect.getsource(...)` to hashing the raw module source file. Recorded values in §0 changed accordingly; `episode_set_digest` and `prompt_digest` are unchanged. | Cross-machine verification (Python 3.8.1 vs 3.11.5, identical file bytes confirmed by `shasum -a 256`) surfaced that `inspect.getsource()` output is not byte-stable across Python versions, so the digest could not be reproduced on a second machine even with zero code drift. This defeated the digests' purpose of independent verifiability. No policy, gateway, or controller *behaviour* changed: the full test suite (38 tests, including `NonCircularityTests`) passes identically before and after, and the underlying source files are byte-identical across both machines. Made before any agent was run under any condition other than the CI-only scripted agent, which is not reportable. |
 
 ## 13. Deposit checklist
 

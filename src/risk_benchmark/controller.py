@@ -33,9 +33,9 @@ Autonomy states, from least to most independent:
 from __future__ import annotations
 
 import hashlib
-import inspect
 import json
 from dataclasses import dataclass, field
+from pathlib import Path
 
 from .gateway import PRIMARY_STRICTNESS
 
@@ -193,7 +193,14 @@ class DynamicAutonomyController:
 
 
 def controller_digest() -> str:
-    """SHA-256 over the controller rule surface, recorded in the preregistration."""
+    """SHA-256 over the controller rule surface, recorded in the preregistration.
+
+    Hashes this module's own source file directly rather than
+    ``inspect.getsource(DynamicAutonomyController)``: the latter is not
+    guaranteed byte-stable across Python versions (observed to differ between
+    3.8 and 3.11 despite identical file content), which defeats the purpose of
+    a digest meant to be independently verifiable across environments.
+    """
     payload = "\n".join(
         [
             CONTROLLER_VERSION,
@@ -201,7 +208,7 @@ def controller_digest() -> str:
             f"{ERROR_RATE_HOLD}|{MIN_EXPOSURE_FOR_PROMOTION}",
             json.dumps(STATE_STRICTNESS, sort_keys=True),
             json.dumps(STATE_AUTONOMOUS_WRITE_BUDGET, sort_keys=True),
-            inspect.getsource(DynamicAutonomyController),
+            Path(__file__).read_text(),
         ]
     )
     return hashlib.sha256(payload.encode()).hexdigest()

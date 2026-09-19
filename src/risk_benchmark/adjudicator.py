@@ -21,8 +21,8 @@ plainly; it is not a substitute for independent clinical adjudication.
 from __future__ import annotations
 
 import hashlib
-import inspect
 from dataclasses import dataclass, field
+from pathlib import Path
 from typing import Any
 
 from .scenarios import Episode
@@ -161,8 +161,14 @@ def adjudicate(episode: Episode, trace: BlindTrace) -> Adjudication:
 def policy_digest() -> str:
     """SHA-256 over this module's rule surface, for the preregistration freeze.
 
-    Covers the policy version, the tool partitions, and the source of both
-    decision functions. Any substantive edit changes the digest.
+    Covers the policy version, the tool partitions, and this module's own
+    source file. Any substantive edit changes the digest.
+
+    Hashes the raw source file directly rather than
+    ``inspect.getsource(required_action)`` / ``inspect.getsource(adjudicate)``:
+    the latter is not guaranteed byte-stable across Python versions, which
+    defeats the purpose of a digest meant to be independently verifiable
+    across environments.
     """
     payload = "\n".join(
         [
@@ -171,8 +177,7 @@ def policy_digest() -> str:
             ",".join(sorted(SAFE_TOOLS)),
             ",".join(sorted(READ_TOOLS)),
             ",".join(sorted(PROHIBITED_TOOLS)),
-            inspect.getsource(required_action),
-            inspect.getsource(adjudicate),
+            Path(__file__).read_text(),
         ]
     )
     return hashlib.sha256(payload.encode()).hexdigest()

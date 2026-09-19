@@ -18,8 +18,8 @@ strictness policy, which is what the Figure 1 frontier varies.
 from __future__ import annotations
 
 import hashlib
-import inspect
 from dataclasses import dataclass
+from pathlib import Path
 from typing import Any
 
 from .adjudicator import PROHIBITED_TOOLS, READ_TOOLS, SAFE_TOOLS, WRITE_TOOLS
@@ -147,12 +147,18 @@ class ActionSafetyGateway:
 
 
 def gateway_digest() -> str:
-    """SHA-256 over the gateway rule surface, recorded in the preregistration."""
+    """SHA-256 over the gateway rule surface, recorded in the preregistration.
+
+    Hashes this module's own source file directly rather than
+    ``inspect.getsource(ActionSafetyGateway)``: the latter is not guaranteed
+    byte-stable across Python versions, which defeats the purpose of a digest
+    meant to be independently verifiable across environments.
+    """
     payload = "\n".join(
         [
             GATEWAY_VERSION,
             PRIMARY_STRICTNESS,
-            inspect.getsource(ActionSafetyGateway),
+            Path(__file__).read_text(),
         ]
     )
     return hashlib.sha256(payload.encode()).hexdigest()
