@@ -4,7 +4,7 @@
   "ORCID": "0009-0009-4780-6953",
   "PREREG_ID": "https://osf.io/3wc9s",
   "PREREG_DATE": "2026-09-19 07:08 UTC",
-  "ZENODO_DOI": "PENDING - Zenodo DOI for the versioned archive",
+  "ZENODO_DOI": "https://doi.org/10.5281/zenodo.22851148",
   "CODE_COMMIT": "5e49069",
   "DEVIATIONS_STATEMENT": "Section 12 of the preregistration. Four deviations were recorded after registration, all before or during the pilot/full run and none altering the frozen episode set, adjudication policy, gateway, or controller behaviour: a Python-version-dependent bug in the freeze-digest computation (inspect.getsource is not byte-stable across Python versions), a transport bug that prevented multi-step episodes from completing under store: false (previous_response_id chaining requires server-side storage), a token-pricing constant mismatched to the pinned model (a single gpt-4.1 price was applied regardless of which model was run), and a retry-logic gap for bare read timeouts. Full detail and rationale for each are in prereg/PREREGISTRATION.md Section 12.",
   "ACKNOWLEDGEMENTS": "The author received no specific funding for this work.",

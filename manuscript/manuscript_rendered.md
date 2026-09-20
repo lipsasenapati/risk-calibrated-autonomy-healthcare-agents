@@ -506,7 +506,7 @@ therefore distributed as code rather than as data; the generator, the frozen
 episode manifest with its SHA-256 digest, and all episode-level run outputs
 (one JSONL record per condition-episode run, including the full action trace,
 gateway dispositions, adjudication verdicts, and provenance) are archived in the
-versioned deposit at PENDING - Zenodo DOI for the versioned archive. The GitHub repository
+versioned deposit at https://doi.org/10.5281/zenodo.22851148. The GitHub repository
 (https://github.com/lipsasenapati/risk-calibrated-autonomy-healthcare-agents)
 is a development mirror and is not the citable archive.
 
@@ -515,7 +515,7 @@ is a development mirror and is not the citable archive.
 All code required to reproduce the benchmark and the reported analysis —
 episode generator, tool environment, Action Safety Gateway, Dynamic Autonomy
 Controller, agent adapters, adjudicator, analysis scripts, figure generation,
-and the test suite — is archived under the MIT licence at PENDING - Zenodo DOI for the versioned archive,
+and the test suite — is archived under the MIT licence at https://doi.org/10.5281/zenodo.22851148,
 corresponding to commit 5e49069. The preregistration is at
 https://osf.io/3wc9s. Reproducing the reported tables and figures requires an API key
 for the prespecified model, supplied through the environment; no credential is
