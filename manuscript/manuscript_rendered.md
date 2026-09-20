@@ -502,24 +502,34 @@ board review was therefore not applicable, and no informed consent was required.
 No dataset containing human, patient, or identifiable personal data was
 generated, accessed, or analysed. The synthetic episode set is not a dataset of
 observations but is produced deterministically by the episode generator, and is
-therefore distributed as code rather than as data; the generator, the frozen
-episode manifest with its SHA-256 digest, and all episode-level run outputs
-(one JSONL record per condition-episode run, including the full action trace,
-gateway dispositions, adjudication verdicts, and provenance) are archived in the
-versioned deposit at https://doi.org/10.5281/zenodo.22851264. The GitHub repository
-(https://github.com/lipsasenapati/risk-calibrated-autonomy-healthcare-agents)
-is a development mirror and is not the citable archive.
+therefore distributed as code rather than as data. The dataset(s) supporting
+the conclusions of this article — the frozen episode manifest with its
+SHA-256 digest, and all episode-level run outputs (one JSONL record per
+condition-episode run, including the full action trace, gateway dispositions,
+adjudication verdicts, and provenance) — are available in the Zenodo
+repository, https://doi.org/10.5281/zenodo.22851264.
+
+Project name: Risk-Calibrated Autonomy for Healthcare AI Agents
+Project home page: https://github.com/lipsasenapati/risk-calibrated-autonomy-healthcare-agents
+Archived version: https://doi.org/10.5281/zenodo.22851264 (commit 5e49069)
+Operating system(s): Platform independent
+Programming language: Python
+Other requirements: Python 3.8 or higher; an OpenAI API key for the
+prespecified model is required to reproduce the live-agent run, supplied
+through the environment (no credential is contained in the repository)
+License: MIT
+Any restrictions to use by non-academics: None
+
+The GitHub repository above is a development mirror and is not the citable
+archive. The preregistration is at https://osf.io/3wc9s.
 
 ## Code availability
 
 All code required to reproduce the benchmark and the reported analysis —
 episode generator, tool environment, Action Safety Gateway, Dynamic Autonomy
 Controller, agent adapters, adjudicator, analysis scripts, figure generation,
-and the test suite — is archived under the MIT licence at https://doi.org/10.5281/zenodo.22851264,
-corresponding to commit 5e49069. The preregistration is at
-https://osf.io/3wc9s. Reproducing the reported tables and figures requires an API key
-for the prespecified model, supplied through the environment; no credential is
-contained in the repository.
+and the test suite — is archived under the MIT licence at the same Zenodo
+deposit as above (https://doi.org/10.5281/zenodo.22851264), corresponding to commit 5e49069.
 
 ## References
 

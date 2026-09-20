@@ -195,6 +195,12 @@ def renumber_footnotes(text: str) -> str:
 
 _HARD_BREAK_RE = re.compile(r"^(#{1,3}\s|>\s|\|.*\||\*\*.*\*\*$|`.*`$|---$)")
 _LIST_START_RE = re.compile(r"^(-\s|\d+\.\s)")
+_FIELD_LABELS = (
+    "Correspondence:", "ORCID:",
+    "Project name:", "Project home page:", "Archived version:",
+    "Operating system(s):", "Programming language:", "Other requirements:",
+    "License:", "Any restrictions to use by non-academics:",
+)
 
 
 def _is_hard_break(stripped: str) -> bool:
@@ -203,9 +209,11 @@ def _is_hard_break(stripped: str) -> bool:
     for marker in FIGURE_MAP:
         if stripped.startswith(marker):
             return True
-    if stripped.startswith("Correspondence:") or stripped.startswith("ORCID:"):
-        return True
     return bool(_HARD_BREAK_RE.match(stripped))
+
+
+def _is_field_label(stripped: str) -> bool:
+    return stripped.startswith(_FIELD_LABELS)
 
 
 def _join_wrapped_paragraphs(lines):
@@ -226,7 +234,7 @@ def _join_wrapped_paragraphs(lines):
                 buf = None
             out.append(raw)
             continue
-        if _LIST_START_RE.match(stripped):
+        if _LIST_START_RE.match(stripped) or _is_field_label(stripped):
             if buf is not None:
                 out.append(buf)
             buf = stripped
