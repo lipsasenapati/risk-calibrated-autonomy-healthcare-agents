@@ -1,8 +1,8 @@
 # Cover letter — BMC Medical Informatics and Decision Making
 
-> Replace every `PENDING` before sending. Do not soften the discussion of
-> limits or the null result: an editor who discovers them during review rather
-> than in the cover letter is entitled to conclude they were being minimised.
+> Do not soften the discussion of limits or the null result: an editor who
+> discovers them during review rather than in the cover letter is entitled to
+> conclude they were being minimised.
 
 ---
 
@@ -96,10 +96,6 @@ at DaVita Inc., which had no role in the design, conduct, analysis or
 reporting of this study, provided no data, systems, or funding, and whose
 publication clearance process was determined not to apply to this independent,
 non-company work.
-
-Suggested reviewers with relevant expertise in agent evaluation and human–AI
-safety, none of whom I have collaborated with: PENDING — name, affiliation,
-email × 3.
 
 Thank you for considering this submission.
 
