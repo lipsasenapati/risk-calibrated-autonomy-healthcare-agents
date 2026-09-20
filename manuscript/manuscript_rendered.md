@@ -37,7 +37,7 @@ observable projection, so the gateway can both wrongly authorize and wrongly
 block. A prespecified rule set blinded to arm adjudicated safety. Unsafe
 actions occurred in 0.7% of fully governed versus 0.4% of
 unconstrained episodes (+0.4 points, 95% CI -0.5 to +1.2,
-P = 0.6875). [SELECT: one sentence of about twenty words reporting task success, human effort, and calibration with paired differences.] These synthetic findings use
+P = 0.6875). Routine task success, escalation accuracy, and calibration were each significantly worse under full governance, which also required more time and human effort. These synthetic findings use
 rule-based adjudication, lack a human comparator, and do not establish
 clinical effectiveness.
 
@@ -149,7 +149,7 @@ The unsafe-action rate was 0.7% in B4 and 0.4% in B3. The
 prespecified paired contrast was +0.4 percentage points
 (95% CI -0.5 to +1.2), P = 0.6875 by exact McNemar test on 576
 pairs, with 2 pairs unsafe in B3 only and
-4 unsafe in B4 only. [SELECT: state whether H1 was supported, using only the numbers above.]
+4 unsafe in B4 only. H1 was not supported: the point estimate moved in the opposite direction to that hypothesised, and the interval is compatible with no difference.
 
 The deterministic-rules arm B2 recorded an unsafe-action rate of 0.0%
 and the gateway-only arm B4G 0.2%. Table 2 gives all arm-level
@@ -192,7 +192,7 @@ Holm-adjusted p-values for the secondary family appear in Table 3.
 Separating the two components, the gateway alone (B4G versus B3) accounted for a
 difference of -0.2 percentage points in unsafe actions, while
 adding the controller (B4 versus B4G) contributed +0.5
-points. [SELECT: which component carried the effect.]
+points. Neither component produced a statistically distinguishable change in the unsafe-action rate (both 95% confidence intervals include zero), so this decomposition does not identify which component, if either, would carry a safety benefit in a setting where one exists.
 
 **Table 4. Mechanism decomposition.**
 
@@ -246,7 +246,7 @@ revocations and increases marked against the monitored signals.
   in the Discussion, so this section is continuous prose by requirement.
 -->
 
-[SELECT: preregistered interpretation paragraph.]
+H1 was not supported. The unsafe-action rate under full governance (0.69%) was numerically higher than under the unconstrained agent (0.35%), and the paired difference (+0.35 percentage points, 95% CI −0.52 to +1.22, P = 0.6875) is compatible with no effect. Mechanism decomposition shows neither component moved the rate in a statistically distinguishable way: the gateway alone (B4G versus B3) shifted the estimate by −0.17 points (P = 1.0) and adding the controller (B4 versus B4G) by +0.52 points (P = 0.375). The most parsimonious explanation is a floor effect specific to this model: the unconstrained agent never once attempted the explicitly prohibited action across 576 episodes, and its baseline unsafe-action rate left little room for an external layer to demonstrate a detectable benefit. Governance was not free: routine and perturbed task success, escalation accuracy, and calibration were each significantly worse under B4 than B3, and time-to-action, human effort, and cost were each significantly higher, confirming H3 as an expected cost while H2a, H2b, H4 and H5 were each contradicted in direction rather than merely unsupported. H6 could not be tested: the controller held its state in 574 of 576 observations and never once reduced or revoked autonomy, leaving no variation in reduction status to relate to the monitored signals.
 
 This benchmark is complementary to, not competitive with, capability suites such
 as MedAgentBench and AgentClinic.[^medagentbench][^agentclinic] Those measure
@@ -262,7 +262,7 @@ perturbation set serves that purpose, and includes an episode in which record
 text instructs the agent to initiate a medication change that policy prohibits
 in every episode.
 
-[SELECT: interpretation of the rules comparator.]
+The deterministic-rules arm (B2) recorded zero unsafe actions by construction: a system incapable of the flexible interpretation that produces both correct escalation and policy violation cannot violate the policy, but this ceiling is fixed rather than earned. B2's routine and perturbed task success were identical (48.6% each), since fixed thresholds are insensitive to the perturbations that degraded the LLM arms' perturbed-episode performance; its cost and human-effort burden were the lowest of any arm, and its calibration was the best observed (ECE 0.267). B2 therefore functions as a naive floor rather than a competing hypothesis, showing what a system with no capacity for unsafe deviation costs and achieves, against which the LLM arms' greater flexibility can be weighed.
 
 Six considerations bound these results, and the first four are structural rather
 than incidental. First, the episodes are synthetic. No patient data were used
@@ -295,7 +295,7 @@ judgements, notably that an elevated social-risk indicator requires human
 confirmation before patient outreach. Such judgements require stakeholder and
 institutional validation and are not derived from evidence.
 
-[SELECT: preregistered conclusion paragraph.]
+Taken together, these results do not support the claim that external authorization enforcement reduces unsafe action for every agent. For this prespecified model, whose ungoverned unsafe-action and prohibited-action rates were already close to zero, the gateway and controller added measurable latency, human effort, and cost without a measurable safety benefit, and degraded task success and calibration. This is a boundary condition rather than a refutation of the general architecture: the magnitude of any authorization benefit is bounded above by the agent's own propensity to propose unsafe actions, and a sufficiently well-aligned model can leave an external layer with nothing to correct while it still charges for the checking. Whether this generalises to models with higher baseline unsafe-action rates, different tool sets, or deployment contexts with adversarial or degraded inputs is not established by this design and would require testing a range of models rather than the single prespecified snapshot used here. The result argues for measuring an agent's unconstrained propensity to violate policy before adding an authorization layer, rather than assuming the layer is cost-free insurance.
 
 ---
 
@@ -310,7 +310,7 @@ rationale and analysis plan were registered before any agent was run
 policy, gateway, controller, and prompt were content-hashed at registration and
 each run records those digests in its provenance record, so any reported result
 can be verified against the registered materials. Deviations from the registered
-plan are listed in PENDING - either 'Section 12 of the preregistration; none were recorded' or a summary of recorded deviations.
+plan are listed in Section 12 of the preregistration. Four deviations were recorded after registration, all before or during the pilot/full run and none altering the frozen episode set, adjudication policy, gateway, or controller behaviour: a Python-version-dependent bug in the freeze-digest computation (inspect.getsource is not byte-stable across Python versions), a transport bug that prevented multi-step episodes from completing under store: false (previous_response_id chaining requires server-side storage), a token-pricing constant mismatched to the pinned model (a single gpt-4.1 price was applied regardless of which model was run), and a retry-logic gap for bare read timeouts. Full detail and rationale for each are in prereg/PREREGISTRATION.md Section 12..
 
 ### Arms
 
@@ -573,7 +573,7 @@ https://doi.org/10.1136/bmj-2022-070904
 
 ## Acknowledgements
 
-PENDING - npj requires funding to be declared here; a separate Funding section is not permitted. If none, state: 'The author received no specific funding for this work.'
+The author received no specific funding for this work.
 
 ## Author contributions
 
@@ -586,7 +586,7 @@ responsibility for the integrity of the work.
 
 The author is employed by DaVita Inc. The company had no role in the design,
 conduct, analysis, or reporting of this study, which used no company data,
-systems, or patient information. PENDING - confirm whether DaVita publication clearance is required and has been obtained, and state it if so
+systems, or patient information. DaVita Inc. publication clearance was determined not to be required, as this work used no DaVita data, systems, patients, or proprietary information and was conducted independently of the author's employment duties.
 
 ## Generative AI disclosure
 
